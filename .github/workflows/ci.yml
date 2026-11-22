@@ -47,4 +47,4 @@ jobs:
       - name: Lint & test
         run: |
           uvx ruff check .
-          PYTHONPATH=src python3 -m pytest -q || PYTHONPATH=src python3 -m unittest discover -s tests
+          uvx --with pytest pytest -q
