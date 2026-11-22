@@ -1,41 +1,33 @@
 # cache-pulse
 
-**Know what's eating your disk before the disk does.**
-
-Your machine is full of Hugging Face weights and PyTorch hubs you downloaded months ago
-and have forgotten about. `cache-pulse` inspects your local AI model caches and
-container runtime in one shot and renders a self-contained HTML dashboard —
-in your browser, or inside a container — with a single command.
-No daemon, no dependencies, no telemetry.
+cache-pulse inspects your local AI model caches (Hugging Face, PyTorch) and your
+container runtime, then renders a self-contained HTML dashboard of what is cached,
+how big it is, and what is running. It is strictly read-only: it never downloads
+models, never mutates caches, and has zero pip dependencies (stdlib Python 3.11+).
 
 ![cache-pulse dashboard](docs/assets/dashboard.png)
 
-## Features
-
-- **Hugging Face inventory** — every cached repo in `HF_HOME` with file count and size
-- **PyTorch inventory** — every `TORCH_HOME` directory with size
-- **Container runtime probe** — rootless Podman first, Docker fallback; version + rootless status
-- **Disk pressure view** — used/total on the cache filesystem with a usage bar
-- **Self-contained dashboard** — one HTML file (`out/latest.html`), zero external assets
-- **Local web server** — `serve` renders (if needed) and serves the report over HTTP
-- **Optional webhook alerts** — Bearer-token JSON POST when disk usage crosses a threshold
-- **Containerized** — stdlib-only OCI image: Podman today, Docker-compatible compose
-- **Read-only by design** — never downloads models, never mutates caches, zero pip dependencies
-
-## Quickstart (host)
+## Quickstart
 
 ```bash
-uvx ruff check .                        # lint
-uvx --with pytest pytest -q             # tests
-PYTHONPATH=src python3 -m cache_pulse inspect --json
-PYTHONPATH=src python3 -m cache_pulse report      # writes out/latest.html
-PYTHONPATH=src python3 -m cache_pulse serve --port 8080   # http://127.0.0.1:8080/latest.html
+PYTHONPATH=src python3 -m cache_pulse inspect --json   # print cache + runtime data
+PYTHONPATH=src python3 -m cache_pulse report           # write out/latest.html
+PYTHONPATH=src python3 -m cache_pulse serve --port 8080  # serve the dashboard
 ```
 
 Cache locations come from `HF_HOME` / `TORCH_HOME` (defaults
-`~/.cache/huggingface`, `~/.cache/torch`).
+`~/.cache/huggingface`, `~/.cache/torch`). Paths under `$HOME` are shown as `~/...`
+in the report, so the dashboard is privacy-clean out of the box.
 
-## Container (Podman today, Docker-compatible)
+## Features
+
+- HF + PyTorch inventory: per-repo file counts and sizes from `HF_HOME` / `TORCH_HOME`
+- Container runtime probe: rootless Podman first, Docker fallback, version + rootless status
+- Disk pressure card: used/total on the cache filesystem with a usage bar
+- One-file HTML dashboard (`out/latest.html`) plus an HTTP `serve` mode that renders on start
+- Optional webhook alert: Bearer-token JSON POST when disk usage crosses a threshold
+
+## Container (Podman and Docker)
 
 ```bash
 cp .env.example .env        # adjust if your caches live elsewhere
@@ -43,11 +35,10 @@ mkdir -p out
 podman compose up --build   # dashboard on http://localhost:8080/latest.html
 ```
 
-Docker users: `docker compose up --build` — same `compose.yml`, plain OCI image,
-stdlib only (no pip step). The Podman rootless socket mount lives in
-`compose.override.yml` (gitignored); enable it with
-`cp compose.override.yml.example compose.override.yml`, or skip overrides with
-`podman compose -f compose.yml up --build`.
+Docker users run `docker compose up --build` from the same `compose.yml` (plain OCI
+image, no pip step). The Podman rootless socket mount lives in `compose.override.yml`
+(gitignored); enable it with `cp compose.override.yml.example compose.override.yml`,
+or skip overrides with `podman compose -f compose.yml up --build`.
 
 ## Alerts (optional)
 
@@ -62,8 +53,15 @@ of the cache filesystem crosses `disk_threshold` (0..1, default 0.9).
 
 ## Layout
 
-- `src/cache_pulse/inspector.py` — cache dirs, repo sizes, podman/docker probe, config, webhook
-- `src/cache_pulse/renderer.py` — HTML rendering to `out/latest.html`
-- `src/cache_pulse/cli.py` — argparse entrypoint (`inspect` / `report` / `serve`)
-- `templates/dashboard.html` — self-contained dashboard template
-- `tests/` — pytest suite
+- `src/cache_pulse/inspector.py`: cache dirs, repo sizes, podman/docker probe, config, webhook
+- `src/cache_pulse/renderer.py`: HTML rendering to `out/latest.html`
+- `src/cache_pulse/cli.py`: argparse entrypoint (`inspect` / `report` / `serve`)
+- `templates/dashboard.html`: self-contained dashboard template
+- `tests/`: pytest suite
+
+## Development
+
+```bash
+uvx ruff check .
+uvx --with pytest pytest -q
+```

@@ -63,6 +63,16 @@ def test_load_config(tmp_path):
     assert load_config(tmp_path / "missing.json") == {}
 
 
+def test_display_path():
+    from pathlib import Path
+
+    from cache_pulse.inspector import _display_path
+
+    home = Path.home()
+    assert _display_path(home / ".cache" / "huggingface") == "~/.cache/huggingface"
+    assert _display_path(Path("/tmp")) == "/tmp"
+
+
 def test_send_alert(tmp_path):
     import cache_pulse.inspector as insp
 

@@ -116,6 +116,15 @@ def check_container_runtime() -> dict:
     }
 
 
+def _display_path(p: Path) -> str:
+    # privacy: show paths under $HOME as ~/... in reports
+    home = Path.home()
+    try:
+        return "~/" + p.relative_to(home).as_posix()
+    except ValueError:
+        return p.as_posix()
+
+
 def build_report_data() -> dict:
     dirs = get_cache_dirs()
     hf = list_hf_models(dirs["hf"])
@@ -126,18 +135,18 @@ def build_report_data() -> dict:
         "generated_at": datetime.now(UTC).isoformat(),
         "host": socket.gethostname(),
         "hf": {
-            "dir": str(dirs["hf"]),
+            "dir": _display_path(dirs["hf"]),
             "models": hf,
             "total_size": sum(m["size"] for m in hf),
         },
         "torch": {
-            "dir": str(dirs["torch"]),
+            "dir": _display_path(dirs["torch"]),
             "caches": tc,
             "total_size": sum(c["size"] for c in tc),
         },
         "container": check_container_runtime(),
         "disk": {
-            "path": str(base),
+            "path": _display_path(base),
             "total": du.total,
             "used": du.used,
             "free": du.free,
