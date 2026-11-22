@@ -1,9 +1,26 @@
 # cache-pulse
 
-Inspect local AI model caches (Hugging Face, PyTorch) and container runtime status
-(rootless Podman / Docker), and render a self-contained HTML dashboard report.
+**Know what's eating your disk before the disk does.**
 
-Stdlib-only Python (3.11+). Read-only: no model downloads, no cache mutation.
+Your machine is full of Hugging Face weights and PyTorch hubs you downloaded months ago
+and have forgotten about. `cache-pulse` inspects your local AI model caches and
+container runtime in one shot and renders a self-contained HTML dashboard —
+in your browser, or inside a container — with a single command.
+No daemon, no dependencies, no telemetry.
+
+![cache-pulse dashboard](docs/assets/dashboard.png)
+
+## Features
+
+- **Hugging Face inventory** — every cached repo in `HF_HOME` with file count and size
+- **PyTorch inventory** — every `TORCH_HOME` directory with size
+- **Container runtime probe** — rootless Podman first, Docker fallback; version + rootless status
+- **Disk pressure view** — used/total on the cache filesystem with a usage bar
+- **Self-contained dashboard** — one HTML file (`out/latest.html`), zero external assets
+- **Local web server** — `serve` renders (if needed) and serves the report over HTTP
+- **Optional webhook alerts** — Bearer-token JSON POST when disk usage crosses a threshold
+- **Containerized** — stdlib-only OCI image: Podman today, Docker-compatible compose
+- **Read-only by design** — never downloads models, never mutates caches, zero pip dependencies
 
 ## Quickstart (host)
 
