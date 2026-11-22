@@ -1,0 +1,22 @@
+[project]
+name = "cache-pulse"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C90", "PLR0912", "PLR0915"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-branches = 12
+max-statements = 50
