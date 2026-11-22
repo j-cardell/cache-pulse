@@ -1,0 +1,7 @@
+# Podman-only extras. Copy to compose.override.yml to activate (gitignored):
+#   cp compose.override.yml.example compose.override.yml
+# Skip overrides entirely with: podman compose -f compose.yml up --build
+services:
+  cache-pulse:
+    volumes:
+      - ${PODMAN_SOCKET_HOST:-/run/user/1000/podman/podman.sock}:/run/podman/podman.sock:ro

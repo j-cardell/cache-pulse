@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$TITLE</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 2rem; background: #0d1117; color: #e6edf3;
+    font-family: system-ui, sans-serif; line-height: 1.5;
+  }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  header { margin-bottom: 1.5rem; }
+  h1 { margin: 0 0 .25rem; font-size: 1.6rem; }
+  .meta { color: #8b949e; font-size: .85rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 1rem; }
+  .card h2 { margin: 0 0 .5rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: #8b949e; }
+  .card .value { font-size: 1.05rem; }
+  .bar { background: #21262d; border-radius: 4px; height: 8px; margin-top: .5rem; overflow: hidden; }
+  .bar .fill { background: #58a6ff; height: 100%; }
+  section { margin-bottom: 1.5rem; }
+  section h2 { font-size: 1rem; margin: 0 0 .25rem; }
+  .sub { color: #8b949e; font-size: .8rem; margin: 0 0 .75rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid #21262d; }
+  th { color: #8b949e; font-weight: 600; }
+  footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #30363d; color: #8b949e; font-size: .85rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>$TITLE</h1>
+  <div class="meta mono">generated $GENERATED_AT &middot; host $HOST</div>
+</header>
+
+<div class="grid">
+  <div class="card">
+    <h2>Container runtime</h2>
+    <div class="value mono">$CONTAINER</div>
+  </div>
+  <div class="card">
+    <h2>Disk</h2>
+    <div class="value mono">$DISK</div>
+  </div>
+</div>
+
+<section>
+  <h2>Hugging Face models</h2>
+  <p class="sub mono">$HF_DIR &middot; $HF_TOTAL</p>
+  <table>
+    <thead><tr><th>Model</th><th>Files</th><th>Size</th></tr></thead>
+    <tbody>$HF_MODELS</tbody>
+  </table>
+</section>
+
+<section>
+  <h2>PyTorch caches</h2>
+  <p class="sub mono">$TORCH_DIR &middot; $TORCH_TOTAL</p>
+  <table>
+    <thead><tr><th>Cache</th><th>Files</th><th>Size</th></tr></thead>
+    <tbody>$TORCH_CACHES</tbody>
+  </table>
+</section>
+
+<footer>
+  Total cached: <span class="mono">$TOTAL_SIZE</span>
+</footer>
+</body>
+</html>

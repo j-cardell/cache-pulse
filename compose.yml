@@ -1,0 +1,16 @@
+# Docker-compatible core. Podman-specific extras (rootless socket) live in
+# compose.override.yml — see compose.override.yml.example (gitignored).
+services:
+  cache-pulse:
+    build: .
+    container_name: cache-pulse
+    ports:
+      - "${CACHE_PULSE_PORT:-8080}:8080"
+    environment:
+      HF_HOME: /caches/huggingface
+      TORCH_HOME: /caches/torch
+      PODMAN_SOCKET: /run/podman/podman.sock
+    volumes:
+      - ${HF_CACHE_HOST:-$HOME/.cache/huggingface}:/caches/huggingface:ro
+      - ${TORCH_CACHE_HOST:-$HOME/.cache/torch}:/caches/torch:ro
+      - ./out:/app/out
